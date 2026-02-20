@@ -1,5 +1,5 @@
 {
-  "name": "claude-statusline",
+  "name": "@mansurme/claude-statusline",
   "version": "1.0.0",
   "description": "Custom statusline for Claude Code with Jira links, context bar, cost tracking, and block timer",
   "bin": {
