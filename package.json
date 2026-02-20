@@ -1,0 +1,28 @@
+{
+  "name": "claude-statusline",
+  "version": "1.0.0",
+  "description": "Custom statusline for Claude Code with Jira links, context bar, cost tracking, and block timer",
+  "bin": {
+    "claude-statusline": "./index.js"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "statusline",
+    "terminal",
+    "developer-tools"
+  ],
+  "author": "Mansur Muaz Ekici",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mansurmuaz/claude-statusline"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "index.js",
+    "templates/"
+  ]
+}
