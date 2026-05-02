@@ -1,7 +1,7 @@
 {
   "name": "@mansurme/claude-statusline",
   "version": "1.0.0",
-  "description": "Custom statusline for Claude Code with Jira links, context bar, cost tracking, and block timer",
+  "description": "Custom statusline for Claude Code with Jira links, context bar, cost tracking, and plan usage indicators (5h / 7d rate-limit windows with reset countdown)",
   "bin": {
     "claude-statusline": "./index.js"
   },

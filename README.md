@@ -3,7 +3,13 @@
 Custom statusline for [Claude Code](https://claude.ai/code) with interactive setup.
 
 ```
-mobileapps-fe | MOB-26016 ● | [████░░░░░░░░] 42% | Opus 4.6 | $4.41 | ⏳ 22m
+mobileapps-fe | MOB-26016 ● | [████░░░░░░░░] 42% | Opus 4.7 | $4.41 | [██████░░░░] 67% ↻2h05m
+```
+
+When the weekly window also gets close (≥75%), both bars are labelled side-by-side:
+
+```
+… | $4.41 | 5h [█████████░] 92% ↻25m | 7d [████████░░] 85% ↻4d00h
 ```
 
 ## Features
@@ -14,7 +20,9 @@ mobileapps-fe | MOB-26016 ● | [████░░░░░░░░] 42% | Opu
 - **Context progress bar** — Color-coded: dim → gold → red as context fills
 - **Model name** — Current Claude model
 - **Session cost** — Real cost from Claude Code API
-- **Block timer** — Rate limit countdown, appears only in last 60 minutes
+- **Plan usage (5h window)** — Always shown when available; bar color steps through dim → gold → red → bold magenta as usage climbs (≥95%)
+- **Plan usage (7d window)** — Only appears when ≥75%; same color ladder; both bars get `5h` / `7d` labels when the weekly bar is visible
+- **Reset countdown** — `↻` timer next to each plan bar; independently colored gold / red / bold magenta as the reset gets close (5h: ≤1h gold, ≤30m red, ≤5m magenta · 7d: ≤1d gold, ≤8h red, ≤1h magenta)
 
 ## Install
 
@@ -26,9 +34,8 @@ Follow the interactive prompts to configure:
 
 1. **Jira URL** — Your Jira instance base URL (optional)
 2. **Ticket prefix** — Branch name pattern (e.g., `MOB`, `PROJ`)
-3. **Block timer** — Timezone and rate limit reset hour
-4. **Bar width** — Context progress bar size
-5. **Color theme** — Default, Vibrant, Pastel, or Monochrome
+3. **Bar width** — Context progress bar size
+4. **Color theme** — Default, Vibrant, Pastel, or Monochrome
 
 Restart Claude Code after setup.
 
@@ -53,7 +60,7 @@ Run `npx claude-statusline` again. Your previous config is backed up automatical
 
 ## How it works
 
-The CLI generates a bash script at `~/.claude/statusline-command.sh` and configures `~/.claude/settings.json` to use it. Claude Code pipes JSON status data to the script on every assistant turn.
+The CLI generates a bash script at `~/.claude/statusline-command.sh` and configures `~/.claude/settings.json` to use it. Claude Code pipes JSON status data to the script on every assistant turn — including `rate_limits.five_hour` and `rate_limits.seven_day` for Pro/Max subscribers, which power the plan usage bars.
 
 ## License
 

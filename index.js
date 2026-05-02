@@ -38,6 +38,7 @@ const COLOR_THEMES = {
     barOk: "\\033[38;5;242m",
     barWarn: "\\033[38;5;179m",
     barCrit: "\\033[38;5;203m",
+    barAlert: "\\033[1;38;5;197m",
   },
   vibrant: {
     label: "Vibrant (colorful, high contrast)",
@@ -46,6 +47,7 @@ const COLOR_THEMES = {
     barOk: "\\033[0;32m",
     barWarn: "\\033[0;33m",
     barCrit: "\\033[1;31m",
+    barAlert: "\\033[1;35m",
   },
   pastel: {
     label: "Pastel (soft, low contrast)",
@@ -54,6 +56,7 @@ const COLOR_THEMES = {
     barOk: "\\033[38;5;245m",
     barWarn: "\\033[38;5;186m",
     barCrit: "\\033[38;5;174m",
+    barAlert: "\\033[1;38;5;176m",
   },
   monochrome: {
     label: "Monochrome (grayscale)",
@@ -62,27 +65,15 @@ const COLOR_THEMES = {
     barOk: "\\033[38;5;240m",
     barWarn: "\\033[38;5;248m",
     barCrit: "\\033[1;37m",
+    barAlert: "\\033[1;38;5;231m",
   },
-};
-
-const TIMEZONE_OFFSETS = {
-  "UTC-8 (PST)": 0,
-  "UTC-5 (EST)": 10800,
-  "UTC+0 (GMT)": 28800,
-  "UTC+1 (CET)": 32400,
-  "UTC+2 (EET)": 36000,
-  "UTC+3 (Istanbul/Moscow)": 10800,
-  "UTC+5:30 (IST)": 19800,
-  "UTC+8 (CST/SGT)": 0,
-  "UTC+9 (JST/KST)": 3600,
-  Custom: null,
 };
 
 async function main() {
   console.log("\n🔧 Claude Code Statusline Setup\n");
   console.log("This will configure a custom statusline for Claude Code.");
   console.log(
-    "Layout: DIR | BRANCH | CONTEXT | MODEL | COST | BLOCK_TIMER\n"
+    "Layout: DIR | BRANCH | CONTEXT | MODEL | COST | 5h-PLAN [| 7d-PLAN]\n"
   );
 
   // Jira
@@ -93,34 +84,6 @@ async function main() {
   let jiraPrefix = "";
   if (jiraUrl) {
     jiraPrefix = await ask("Jira ticket prefix", "MOB");
-  }
-
-  // Block timer
-  const enableBlock = await ask("Enable rate limit block timer? (y/n)", "y");
-  let blockAnchor = 10800;
-  if (enableBlock.toLowerCase() === "y") {
-    const tzOptions = Object.entries(TIMEZONE_OFFSETS).map(([label, val]) => ({
-      label,
-      value: { label, offset: val },
-    }));
-    const tz = await choose("Your timezone (for block timer reset):", tzOptions);
-
-    if (tz.offset === null) {
-      const customHour = await ask("Reset hour in UTC (0-23)", "3");
-      blockAnchor = parseInt(customHour) * 3600;
-    } else {
-      const resetHour = await ask(
-        "Rate limit resets at which hour (local time)?",
-        "6"
-      );
-      const localResetSeconds = parseInt(resetHour) * 3600;
-      // Extract UTC offset hours from label
-      const match = tz.label.match(/UTC([+-]\d+)/);
-      const utcOffsetHours = match ? parseInt(match[1]) : 0;
-      blockAnchor = localResetSeconds - utcOffsetHours * 3600;
-      if (blockAnchor < 0) blockAnchor += 86400;
-      blockAnchor = blockAnchor % 86400;
-    }
   }
 
   // Bar width
@@ -142,13 +105,13 @@ async function main() {
 
   script = script.replace("__JIRA_BASE_URL__", jiraUrl);
   script = script.replace("__JIRA_TICKET_PREFIX__", jiraPrefix);
-  script = script.replace("__BLOCK_ANCHOR_OFFSET__", String(blockAnchor));
   script = script.replace("__BAR_WIDTH__", barWidth);
   script = script.replace("__C_DIR__", theme.dir);
   script = script.replace("__C_BRANCH__", theme.branch);
   script = script.replace("__C_BAR_OK__", theme.barOk);
   script = script.replace("__C_BAR_WARN__", theme.barWarn);
   script = script.replace("__C_BAR_CRIT__", theme.barCrit);
+  script = script.replace("__C_BAR_ALERT__", theme.barAlert);
 
   // Write statusline script
   const claudeDir = path.join(os.homedir(), ".claude");
