@@ -35,6 +35,7 @@ const COLOR_THEMES = {
     label: "Default (muted, eye-friendly)",
     dir: "\\033[38;5;73m",
     branch: "\\033[38;5;217m",
+    worktree: "\\033[38;5;140m",
     barOk: "\\033[38;5;242m",
     barWarn: "\\033[38;5;179m",
     barCrit: "\\033[38;5;203m",
@@ -44,6 +45,7 @@ const COLOR_THEMES = {
     label: "Vibrant (colorful, high contrast)",
     dir: "\\033[0;36m",
     branch: "\\033[0;31m",
+    worktree: "\\033[0;35m",
     barOk: "\\033[0;32m",
     barWarn: "\\033[0;33m",
     barCrit: "\\033[1;31m",
@@ -53,6 +55,7 @@ const COLOR_THEMES = {
     label: "Pastel (soft, low contrast)",
     dir: "\\033[38;5;109m",
     branch: "\\033[38;5;181m",
+    worktree: "\\033[38;5;146m",
     barOk: "\\033[38;5;245m",
     barWarn: "\\033[38;5;186m",
     barCrit: "\\033[38;5;174m",
@@ -62,6 +65,7 @@ const COLOR_THEMES = {
     label: "Monochrome (grayscale)",
     dir: "\\033[38;5;250m",
     branch: "\\033[38;5;246m",
+    worktree: "\\033[38;5;243m",
     barOk: "\\033[38;5;240m",
     barWarn: "\\033[38;5;248m",
     barCrit: "\\033[1;37m",
@@ -73,7 +77,7 @@ async function main() {
   console.log("\n🔧 Claude Code Statusline Setup\n");
   console.log("This will configure a custom statusline for Claude Code.");
   console.log(
-    "Layout: DIR | BRANCH | CONTEXT | MODEL | COST | 5h-PLAN [| 7d-PLAN]\n"
+    "Layout: DIR [| WORKTREE] | BRANCH | CONTEXT | MODEL | COST | 5h-PLAN [| 7d-PLAN]\n"
   );
 
   // Jira
@@ -88,6 +92,16 @@ async function main() {
 
   // Bar width
   const barWidth = await ask("Context bar width (characters)", "12");
+
+  // Git worktree support
+  const showWorktree = await choose("Git worktree support:", [
+    {
+      label:
+        "On — DIR shows the repo name, linked worktrees get their own ⑂ field",
+      value: "true",
+    },
+    { label: "Off — DIR is just the current folder name", value: "false" },
+  ]);
 
   // Color theme
   const themeOptions = Object.entries(COLOR_THEMES).map(([key, theme]) => ({
@@ -106,8 +120,10 @@ async function main() {
   script = script.replace("__JIRA_BASE_URL__", jiraUrl);
   script = script.replace("__JIRA_TICKET_PREFIX__", jiraPrefix);
   script = script.replace("__BAR_WIDTH__", barWidth);
+  script = script.replace("__SHOW_WORKTREE__", showWorktree);
   script = script.replace("__C_DIR__", theme.dir);
   script = script.replace("__C_BRANCH__", theme.branch);
+  script = script.replace("__C_WORKTREE__", theme.worktree);
   script = script.replace("__C_BAR_OK__", theme.barOk);
   script = script.replace("__C_BAR_WARN__", theme.barWarn);
   script = script.replace("__C_BAR_CRIT__", theme.barCrit);

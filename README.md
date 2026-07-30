@@ -6,6 +6,12 @@ Custom statusline for [Claude Code](https://claude.ai/code) with interactive set
 mobileapps-fe | MOB-26016 ● | [████░░░░░░░░] 42% | Opus 4.7 | $4.41 | [██████░░░░] 67% ↻2h05m
 ```
 
+Inside a git worktree, the repo name stays in place and the worktree gets its own field:
+
+```
+mobileapps-fe | ⑂ MOB-26016 | MOB-26016 ● | [████░░░░░░░░] 42% | Opus 4.7 | $4.41
+```
+
 When the weekly window also gets close (≥75%), both bars are labelled side-by-side:
 
 ```
@@ -14,7 +20,8 @@ When the weekly window also gets close (≥75%), both bars are labelled side-by-
 
 ## Features
 
-- **Directory** — Current project folder name
+- **Directory** — Repository name (or the current folder, with worktree support off)
+- **Git worktree** — Linked worktrees get a `⑂` field of their own, so parallel sessions stay distinguishable; hidden entirely in a normal checkout
 - **Git branch** — With clickable Jira ticket links (OSC 8)
 - **Dirty indicator** — Orange dot when uncommitted changes exist
 - **Context progress bar** — Color-coded: dim → gold → red as context fills
@@ -35,7 +42,8 @@ Follow the interactive prompts to configure:
 1. **Jira URL** — Your Jira instance base URL (optional)
 2. **Ticket prefix** — Branch name pattern (e.g., `MOB`, `PROJ`)
 3. **Bar width** — Context progress bar size
-4. **Color theme** — Default, Vibrant, Pastel, or Monochrome
+4. **Worktree support** — On (repo name in DIR + `⑂` field) or off (plain folder name)
+5. **Color theme** — Default, Vibrant, Pastel, or Monochrome
 
 Restart Claude Code after setup.
 
@@ -56,7 +64,7 @@ Run `npx claude-statusline` again. Your previous config is backed up automatical
 
 - Claude Code v1.0.33+
 - `jq` (for JSON parsing)
-- `git` (for branch/dirty detection)
+- `git` (for branch/dirty detection; 2.31+ for worktree detection — on older git the worktree field is skipped and DIR falls back to the folder name)
 
 ## How it works
 
