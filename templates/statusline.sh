@@ -36,7 +36,15 @@ C_BAR_ALERT="__C_BAR_ALERT__"
 # ============================================================
 model=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
-[ -n "$effort" ] && model="${model}·${effort}"
+
+# Effort color: muted, below the reset countdown's brightness
+case "$effort" in
+  medium) C_EFFORT="\033[38;5;65m" ;;  # grayish green
+  high)   C_EFFORT="\033[38;5;144m" ;; # grayish yellow
+  xhigh)  C_EFFORT="\033[38;5;138m" ;; # grayish rose
+  max)    C_EFFORT="\033[38;5;131m" ;; # grayish red
+  *)      C_EFFORT="$C_MODEL" ;;
+esac
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // ""')
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
@@ -200,6 +208,10 @@ fi
 
 [ -n "$ctx_str" ] && parts="${parts}${sep}${ctx_str}"
 parts="${parts}${sep}${C_MODEL}${model}${C_RESET}"
+if [ -n "$effort" ]; then
+  effort_label="$(echo "${effort:0:1}" | tr '[:lower:]' '[:upper:]')${effort:1}"
+  parts="${parts}${C_DIM} · ${C_RESET}${C_EFFORT}${effort_label}${C_RESET}"
+fi
 [ -n "$usage_str" ] && parts="${parts}${sep}${usage_str}"
 [ -n "$plan_str" ] && parts="${parts}${sep}${plan_str}"
 [ -n "$week_str" ] && parts="${parts}${sep}${week_str}"
