@@ -35,6 +35,8 @@ C_BAR_ALERT="__C_BAR_ALERT__"
 # SCRIPT
 # ============================================================
 model=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
+effort=$(echo "$input" | jq -r '.effort.level // empty')
+[ -n "$effort" ] && model="${model}·${effort}"
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // ""')
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
